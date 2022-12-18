@@ -1,0 +1,22 @@
+plugins {
+    id 'java'
+    id 'com.github.johnrengelman.shadow' version '7.1.2'
+}
+
+sourceCompatibility = 17
+
+group 'com.arcanewarrior'
+version '0.0.3'
+
+repositories {
+    mavenCentral()
+    maven { url 'https://jitpack.io' }
+}
+
+dependencies {
+    compileOnly 'com.github.Minestom:Minestom:809d9516b2'
+}
+
+shadowJar {
+    archiveClassifier.set('')
+}
