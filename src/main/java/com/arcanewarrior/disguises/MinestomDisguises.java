@@ -4,8 +4,8 @@ import com.arcanewarrior.disguises.commands.CommandInitializer;
 import com.arcanewarrior.disguises.events.DisguiseEvents;
 import com.arcanewarrior.disguises.events.EventInitializer;
 import net.minestom.server.MinecraftServer;
-import net.minestom.server.extensions.Extension;
 import net.minestom.server.tag.Tag;
+import xyz.citywide.citystom.Extension;
 
 public class MinestomDisguises extends Extension {
 

@@ -12,6 +12,7 @@ repositories {
 
 dependencies {
     compileOnly("com.github.Minestom:Minestom:809d9516b2")
+    compileOnly("com.github.CityWideMC:CityStom:8f9625559f")
 }
 
 java {
