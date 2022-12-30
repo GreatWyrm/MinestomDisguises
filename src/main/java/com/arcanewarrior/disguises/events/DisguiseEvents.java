@@ -109,7 +109,7 @@ public final class DisguiseEvents {
     private void playerSpawn(PlayerPacketOutEvent event) {
         if (event.getPacket() instanceof SpawnPlayerPacket packet) {
             Player player = MinecraftServer.getConnectionManager().getPlayer(packet.playerUuid());
-            if (player != null) {
+            if (player != null && !player.equals(event.getPlayer())) {
                 Disguise disguise = parentManager.getPlayerDisguise(player);
                 if (disguise != null) {
                     player.removeViewer(event.getPlayer());
