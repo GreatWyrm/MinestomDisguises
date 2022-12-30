@@ -8,6 +8,8 @@ import net.minestom.server.tag.Tag;
 import xyz.citywide.citystom.Extension;
 
 public class MinestomDisguises extends Extension {
+
+    private static MinestomDisguises instance;
     private CommandInitializer commandInitializer;
     private EventInitializer eventInitializer;
     private DisguiseEvents disguiseEvents;
@@ -17,6 +19,8 @@ public class MinestomDisguises extends Extension {
 
     @Override
     public void initialize() {
+        instance = this;
+
         eventInitializer = new EventInitializer();
         disguiseManager = new DisguiseManager(hideTag);
         commandInitializer = new CommandInitializer(disguiseManager);
@@ -30,5 +34,9 @@ public class MinestomDisguises extends Extension {
     @Override
     public void terminate() {
         commandInitializer.unregisterAll(MinecraftServer.getCommandManager());
+    }
+
+    public static MinestomDisguises getInstance() {
+        return instance;
     }
 }

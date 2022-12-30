@@ -2,6 +2,8 @@ package com.arcanewarrior.disguises.events;
 
 import com.arcanewarrior.disguises.Disguise;
 import com.arcanewarrior.disguises.DisguiseManager;
+import net.minestom.server.MinecraftServer;
+import net.minestom.server.entity.Player;
 import net.minestom.server.event.Event;
 import net.minestom.server.event.EventFilter;
 import net.minestom.server.event.EventNode;
@@ -10,10 +12,7 @@ import net.minestom.server.event.player.PlayerPacketOutEvent;
 import net.minestom.server.event.trait.PlayerEvent;
 import net.minestom.server.network.packet.client.play.ClientPlayerPositionPacket;
 import net.minestom.server.network.packet.client.play.ClientPlayerRotationPacket;
-import net.minestom.server.network.packet.server.play.EntityAnimationPacket;
-import net.minestom.server.network.packet.server.play.EntityPositionPacket;
-import net.minestom.server.network.packet.server.play.EntityRotationPacket;
-import net.minestom.server.network.packet.server.play.EntityTeleportPacket;
+import net.minestom.server.network.packet.server.play.*;
 import net.minestom.server.utils.PacketUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,6 +29,8 @@ public final class DisguiseEvents {
         EventNode<PlayerEvent> playerParent = EventNode.type("disguises-events", EventFilter.PLAYER);
         playerParent.addListener(PlayerPacketEvent.class, this::onPlayerMove);
         playerParent.addListener(PlayerPacketOutEvent.class, this::playerEntityAnimation);
+        playerParent.addListener(PlayerPacketOutEvent.class, this::playerTeleport);
+        playerParent.addListener(PlayerPacketOutEvent.class, this::playerSpawn);
         node.addChild(playerParent);
     }
 
@@ -78,6 +79,19 @@ public final class DisguiseEvents {
             if(disguise != null) {
                 EntityTeleportPacket newPacket = new EntityTeleportPacket(disguise.getEntityId(), packet.position(), packet.onGround());
                 PacketUtils.sendGroupedPacket(disguise.getViewers(), newPacket);
+            }
+        }
+    }
+
+    private void playerSpawn(PlayerPacketOutEvent event) {
+        if(event.getPacket() instanceof SpawnPlayerPacket packet) {
+            Player player = MinecraftServer.getConnectionManager().getPlayer(packet.playerUuid());
+            if(player != null) {
+                Disguise disguise = parentManager.getPlayerDisguise(player);
+                if(disguise != null) {
+                    player.removeViewer(event.getPlayer());
+                    disguise.addViewer(event.getPlayer());
+                }
             }
         }
     }
