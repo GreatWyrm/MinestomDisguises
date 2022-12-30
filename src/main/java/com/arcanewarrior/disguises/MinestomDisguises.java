@@ -8,7 +8,6 @@ import net.minestom.server.tag.Tag;
 import xyz.citywide.citystom.Extension;
 
 public class MinestomDisguises extends Extension {
-
     private CommandInitializer commandInitializer;
     private EventInitializer eventInitializer;
     private DisguiseEvents disguiseEvents;

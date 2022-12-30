@@ -1,7 +1,7 @@
 package com.arcanewarrior.disguises.events;
 
+import com.arcanewarrior.disguises.Disguise;
 import com.arcanewarrior.disguises.DisguiseManager;
-import net.minestom.server.entity.Entity;
 import net.minestom.server.event.Event;
 import net.minestom.server.event.EventFilter;
 import net.minestom.server.event.EventNode;
@@ -13,11 +13,12 @@ import net.minestom.server.network.packet.client.play.ClientPlayerRotationPacket
 import net.minestom.server.network.packet.server.play.EntityAnimationPacket;
 import net.minestom.server.network.packet.server.play.EntityPositionPacket;
 import net.minestom.server.network.packet.server.play.EntityRotationPacket;
+import net.minestom.server.network.packet.server.play.EntityTeleportPacket;
 import net.minestom.server.utils.PacketUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class DisguiseEvents {
+public final class DisguiseEvents {
     private final DisguiseManager parentManager;
     private final Logger logger = LoggerFactory.getLogger(DisguiseEvents.class);
     public DisguiseEvents(DisguiseManager manager) {
@@ -35,7 +36,7 @@ public class DisguiseEvents {
 
     private void onPlayerMove(PlayerPacketEvent event) {
         if(event.getPacket() instanceof ClientPlayerPositionPacket positionPacket) {
-            Entity disguise = parentManager.getPlayerDisguise(event.getPlayer());
+            Disguise disguise = parentManager.getPlayerDisguise(event.getPlayer());
             if(disguise != null) {
                 // Translate player move to disguise move
                 // Calculate delta
@@ -50,7 +51,7 @@ public class DisguiseEvents {
         }
 
         if(event.getPacket() instanceof ClientPlayerRotationPacket rotationPacket) {
-            Entity disguise = parentManager.getPlayerDisguise(event.getPlayer());
+            Disguise disguise = parentManager.getPlayerDisguise(event.getPlayer());
             if(disguise != null) {
                 // Translate player head move to disguise head move
                 EntityRotationPacket disguisePositionPacket = new EntityRotationPacket(disguise.getEntityId(), rotationPacket.yaw(), rotationPacket.pitch(), rotationPacket.onGround());
@@ -61,11 +62,21 @@ public class DisguiseEvents {
 
     private void playerEntityAnimation(PlayerPacketOutEvent event) {
         if(event.getPacket() instanceof EntityAnimationPacket packet) {
-            Entity disguise = parentManager.getPlayerDisguise(event.getPlayer());
+            Disguise disguise = parentManager.getPlayerDisguise(event.getPlayer());
             if(disguise != null) {
                 // Translate animation from player to disguise
                 // TODO: Check to see which animations may not need translation, may have to check per entity type
                 EntityAnimationPacket newPacket = new EntityAnimationPacket(disguise.getEntityId(), packet.animation());
+                PacketUtils.sendGroupedPacket(disguise.getViewers(), newPacket);
+            }
+        }
+    }
+
+    private void playerTeleport(PlayerPacketOutEvent event) {
+        if(event.getPacket() instanceof EntityTeleportPacket packet) {
+            Disguise disguise = parentManager.getPlayerDisguise(event.getPlayer());
+            if(disguise != null) {
+                EntityTeleportPacket newPacket = new EntityTeleportPacket(disguise.getEntityId(), packet.position(), packet.onGround());
                 PacketUtils.sendGroupedPacket(disguise.getViewers(), newPacket);
             }
         }
