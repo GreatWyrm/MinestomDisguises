@@ -21,6 +21,6 @@ public final class Disguise extends LivingEntity {
     }
 
     public void undisguise() {
-       manager.unDisguisePlayer(getPlayer());
+       manager.undisguisePlayer(getPlayer());
     }
 }
