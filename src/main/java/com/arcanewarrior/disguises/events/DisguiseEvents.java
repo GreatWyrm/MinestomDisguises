@@ -2,12 +2,17 @@ package com.arcanewarrior.disguises.events;
 
 import com.arcanewarrior.disguises.DisguiseManager;
 import net.minestom.server.entity.Entity;
+import net.minestom.server.entity.Player;
 import net.minestom.server.event.Event;
+import net.minestom.server.event.EventDispatcher;
 import net.minestom.server.event.EventFilter;
 import net.minestom.server.event.EventNode;
+import net.minestom.server.event.entity.EntityAttackEvent;
+import net.minestom.server.event.player.PlayerEntityInteractEvent;
 import net.minestom.server.event.player.PlayerPacketEvent;
 import net.minestom.server.event.player.PlayerPacketOutEvent;
 import net.minestom.server.event.trait.PlayerEvent;
+import net.minestom.server.network.packet.client.play.ClientInteractEntityPacket;
 import net.minestom.server.network.packet.client.play.ClientPlayerPositionPacket;
 import net.minestom.server.network.packet.client.play.ClientPlayerRotationPacket;
 import net.minestom.server.network.packet.server.play.EntityAnimationPacket;
@@ -26,14 +31,15 @@ public class DisguiseEvents {
 
     public void registerAll(EventNode<Event> node) {
         // Player Events
-        EventNode<PlayerEvent> playerParent = EventNode.type("disguises-events", EventFilter.PLAYER);
-        playerParent.addListener(PlayerPacketEvent.class, this::onPlayerMove);
+        EventNode<PlayerEvent> playerParent = EventNode.type("disguise-player-events", EventFilter.PLAYER);
+        playerParent.addListener(PlayerPacketEvent.class, this::handlePlayerPacketInput);
         playerParent.addListener(PlayerPacketOutEvent.class, this::playerEntityAnimation);
         node.addChild(playerParent);
     }
 
 
-    private void onPlayerMove(PlayerPacketEvent event) {
+    private void handlePlayerPacketInput(PlayerPacketEvent event) {
+        // It would be neat if we could do a switch on event.getPacket(), and then handle the individual cases, but that's in Java 17 preview :(
         if(event.getPacket() instanceof ClientPlayerPositionPacket positionPacket) {
             Entity disguise = parentManager.getPlayerDisguise(event.getPlayer());
             if(disguise != null) {
@@ -47,15 +53,30 @@ public class DisguiseEvents {
                 EntityPositionPacket disguisePositionPacket = new EntityPositionPacket(disguise.getEntityId(), xDiff, yDiff, zDiff, positionPacket.onGround());
                 PacketUtils.sendGroupedPacket(disguise.getViewers(), disguisePositionPacket);
             }
-        }
-
-        if(event.getPacket() instanceof ClientPlayerRotationPacket rotationPacket) {
+        } else if(event.getPacket() instanceof ClientPlayerRotationPacket rotationPacket) {
             Entity disguise = parentManager.getPlayerDisguise(event.getPlayer());
             if(disguise != null) {
                 // Translate player head move to disguise head move
                 EntityRotationPacket disguisePositionPacket = new EntityRotationPacket(disguise.getEntityId(), rotationPacket.yaw(), rotationPacket.pitch(), rotationPacket.onGround());
                 PacketUtils.sendGroupedPacket(disguise.getViewers(), disguisePositionPacket);
             }
+        } else if(event.getPacket() instanceof ClientInteractEntityPacket interactEntityPacket) {
+            // Inversion! We want to see if a player interacted with a disguise and translate internally from there
+            Player trueTarget = parentManager.getPlayerFromDisguise(interactEntityPacket.targetId());
+            if(trueTarget != null) {
+                // Interaction safety checks
+                if (event.getPlayer().getDistance(trueTarget) < 6 && !trueTarget.isDead()) {
+                    ClientInteractEntityPacket.Type type = interactEntityPacket.type();
+                    if (type instanceof ClientInteractEntityPacket.Attack) {
+                        EventDispatcher.call(new EntityAttackEvent(event.getPlayer(), trueTarget));
+                    } else if (type instanceof ClientInteractEntityPacket.InteractAt interactAt) {
+                        EventDispatcher.call(new PlayerEntityInteractEvent(event.getPlayer(), trueTarget, interactAt.hand()));
+                    }
+                }
+                // Cancel the event so the original input does not go through
+                event.setCancelled(true);
+            }
+
         }
     }
 
