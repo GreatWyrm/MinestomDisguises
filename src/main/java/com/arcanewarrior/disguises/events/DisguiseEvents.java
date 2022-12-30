@@ -4,7 +4,6 @@ import com.arcanewarrior.disguises.Disguise;
 import com.arcanewarrior.disguises.DisguiseManager;
 import net.minestom.server.MinecraftServer;
 import net.minestom.server.entity.Player;
-import net.minestom.server.event.Event;
 import net.minestom.server.event.EventDispatcher;
 import net.minestom.server.event.EventFilter;
 import net.minestom.server.event.EventNode;
@@ -28,7 +27,7 @@ public final class DisguiseEvents {
         this.parentManager = manager;
     }
 
-    public void registerAll(EventNode<Event> node) {
+    public void registerAll(EventNode<PlayerEvent> node) {
         // Player Events
         EventNode<PlayerEvent> playerParent = EventNode.type("disguise-player-events", EventFilter.PLAYER);
         playerParent.addListener(PlayerPacketEvent.class, this::handlePlayerPacketInput);

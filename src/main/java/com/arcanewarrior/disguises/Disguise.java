@@ -19,6 +19,6 @@ public final class Disguise extends LivingEntity {
     }
 
     public void unDisguise() {
-        MinestomDisguises.getInstance().getDisguiseManager().undisguisePlayer(getPlayer());
+        MinestomDisguises.getInstance().getDisguiseManager().unDisguisePlayer(getPlayer());
     }
 }

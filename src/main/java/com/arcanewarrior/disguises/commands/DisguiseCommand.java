@@ -34,7 +34,7 @@ public class DisguiseCommand extends Command {
             List<Entity> playerList = context.get(players).find(sender);
             for(Entity entity : playerList) {
                 if(entity instanceof Player player) {
-                    manager.undisguisePlayer(player);
+                    manager.unDisguisePlayer(player);
                 }
             }
         }, removeArg, players);

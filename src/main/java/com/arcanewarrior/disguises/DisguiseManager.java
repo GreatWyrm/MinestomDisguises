@@ -49,7 +49,7 @@ public final class DisguiseManager {
         player.getViewers().forEach(disguise::addViewer);
     }
 
-    public void undisguisePlayer(@NotNull Player player) {
+    public void unDisguisePlayer(@NotNull Player player) {
         if (!disguisedPlayers.containsKey(player)) {
             logger.warn("Tried to remove the disguise from " + player.getUsername() + ", but they weren't disguised!");
             return;

@@ -9,5 +9,10 @@
     "artifacts": [
       "com.github.CityWideMC:CityStom:8f9625559f"
     ]
-  }
+  },
+  "authors": [
+    "CityWideMC",
+    "HEROOSTECH",
+    "GreatWyrm"
+  ]
 }
