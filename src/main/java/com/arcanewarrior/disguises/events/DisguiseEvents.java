@@ -152,7 +152,7 @@ public final class DisguiseEvents {
     private void playerPassengers(PlayerPacketOutEvent event) {
         if (event.getPacket() instanceof SetPassengersPacket packet) {
             Player player = event.getPlayer();
-            if (packet.vehicleEntityId() == packet.getId()) {
+            if (packet.vehicleEntityId() == player.getEntityId()) {
                 Disguise disguise = parentManager.getPlayerDisguise(player);
                 if (disguise != null) {
                     SetPassengersPacket newPacket = new SetPassengersPacket(disguise.getEntityId(), packet.passengersId());
