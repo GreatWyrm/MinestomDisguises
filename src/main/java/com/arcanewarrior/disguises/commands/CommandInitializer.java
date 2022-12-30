@@ -3,6 +3,7 @@ package com.arcanewarrior.disguises.commands;
 import com.arcanewarrior.disguises.DisguiseManager;
 import net.minestom.server.command.CommandManager;
 import net.minestom.server.command.builder.Command;
+import xyz.citywide.citystom.Extension;
 
 import java.util.HashSet;
 
@@ -16,9 +17,9 @@ public class CommandInitializer {
         disguiseCommands.add(new DisguiseCommand(disguiseManager));
     }
 
-    public void registerAll(CommandManager manager) {
+    public void registerAll(Extension extension) {
         for(Command command : disguiseCommands) {
-            manager.register(command);
+            extension.registerCommand(command);
         }
     }
 

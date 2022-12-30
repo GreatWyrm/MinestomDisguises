@@ -41,6 +41,7 @@ hs_err_pid*
 .idea/dictionaries
 .idea/vcs.xml
 .idea/jsLibraryMappings.xml
+.idea/MinestomDisguises.iml
 # ArcaneWarrior - Ignore Specific IntelliJ plugins
 .idea/discord.xml
 
