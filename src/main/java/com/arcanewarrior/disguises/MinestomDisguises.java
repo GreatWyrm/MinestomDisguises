@@ -7,7 +7,7 @@ import net.minestom.server.MinecraftServer;
 import net.minestom.server.tag.Tag;
 import xyz.citywide.citystom.Extension;
 
-public class MinestomDisguises extends Extension {
+public final class MinestomDisguises extends Extension {
 
     private static MinestomDisguises instance;
     private CommandInitializer commandInitializer;
@@ -38,5 +38,9 @@ public class MinestomDisguises extends Extension {
 
     public static MinestomDisguises getInstance() {
         return instance;
+    }
+
+    public DisguiseManager getDisguiseManager() {
+        return disguiseManager;
     }
 }
