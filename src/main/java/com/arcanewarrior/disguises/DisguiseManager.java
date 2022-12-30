@@ -67,6 +67,20 @@ public final class DisguiseManager {
         return disguisedPlayers.getOrDefault(player, null);
     }
 
+    /**
+     * Gets the player that is wearing the disguise based on the entity ID
+     * @param entityId The entity id
+     * @return The player object that has the disguise, or null if it's a normal entity
+     */
+    public @Nullable Player getPlayerFromDisguise(int entityId) {
+        for (var entry : disguisedPlayers.entrySet()) {
+            if(entry.getValue().getEntityId() == entityId) {
+                return entry.getKey();
+            }
+        }
+        return null;
+    }
+
 
     // ----------- SHOW/HIDE PLAYERS -----------------
 

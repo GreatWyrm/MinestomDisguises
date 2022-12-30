@@ -25,7 +25,7 @@ public class MinestomDisguises extends Extension {
         disguiseManager = new DisguiseManager(hideTag);
         commandInitializer = new CommandInitializer(disguiseManager);
 
-        commandInitializer.registerAll(MinecraftServer.getCommandManager());
+        commandInitializer.registerAll(this);
         eventInitializer.registerAll(getEventNode(), hideTag);
         disguiseEvents = new DisguiseEvents(disguiseManager);
         disguiseEvents.registerAll(getEventNode());
