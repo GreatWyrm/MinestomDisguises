@@ -6,9 +6,11 @@ import net.minestom.server.event.Event;
 import net.minestom.server.event.EventFilter;
 import net.minestom.server.event.EventNode;
 import net.minestom.server.event.player.PlayerPacketEvent;
+import net.minestom.server.event.player.PlayerPacketOutEvent;
 import net.minestom.server.event.trait.PlayerEvent;
 import net.minestom.server.network.packet.client.play.ClientPlayerPositionPacket;
 import net.minestom.server.network.packet.client.play.ClientPlayerRotationPacket;
+import net.minestom.server.network.packet.server.play.EntityAnimationPacket;
 import net.minestom.server.network.packet.server.play.EntityPositionPacket;
 import net.minestom.server.network.packet.server.play.EntityRotationPacket;
 import net.minestom.server.utils.PacketUtils;
@@ -26,6 +28,7 @@ public class DisguiseEvents {
         // Player Events
         EventNode<PlayerEvent> playerParent = EventNode.type("disguises-events", EventFilter.PLAYER);
         playerParent.addListener(PlayerPacketEvent.class, this::onPlayerMove);
+        playerParent.addListener(PlayerPacketOutEvent.class, this::playerEntityAnimation);
         node.addChild(playerParent);
     }
 
@@ -52,6 +55,18 @@ public class DisguiseEvents {
                 // Translate player head move to disguise head move
                 EntityRotationPacket disguisePositionPacket = new EntityRotationPacket(disguise.getEntityId(), rotationPacket.yaw(), rotationPacket.pitch(), rotationPacket.onGround());
                 PacketUtils.sendGroupedPacket(disguise.getViewers(), disguisePositionPacket);
+            }
+        }
+    }
+
+    private void playerEntityAnimation(PlayerPacketOutEvent event) {
+        if(event.getPacket() instanceof EntityAnimationPacket packet) {
+            Entity disguise = parentManager.getPlayerDisguise(event.getPlayer());
+            if(disguise != null) {
+                // Translate animation from player to disguise
+                // TODO: Check to see which animations may not need translation, may have to check per entity type
+                EntityAnimationPacket newPacket = new EntityAnimationPacket(disguise.getEntityId(), packet.animation());
+                PacketUtils.sendGroupedPacket(disguise.getViewers(), newPacket);
             }
         }
     }
