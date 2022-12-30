@@ -1,0 +1,17 @@
+{
+  "entrypoint": "com.arcanewarrior.disguises.MinestomDisguises",
+  "name": "MinestomDisguises",
+  "version": "0.0.3",
+  "externalDependencies": {
+    "repositories": [
+      {"name": "jitpack", "url": "https://jitpack.io" }
+    ],
+    "artifacts": [
+      "com.github.CityWideMC:CityStom:8f9625559f"
+    ]
+  },
+  "authors": [
+    "HEROOSTECH",
+    "GreatWyrm"
+  ]
+}
