@@ -23,6 +23,7 @@ import org.slf4j.LoggerFactory;
 public final class DisguiseEvents {
     private final DisguiseManager parentManager;
     private final Logger logger = LoggerFactory.getLogger(DisguiseEvents.class);
+
     public DisguiseEvents(DisguiseManager manager) {
         this.parentManager = manager;
     }
@@ -36,15 +37,16 @@ public final class DisguiseEvents {
         playerParent.addListener(PlayerPacketOutEvent.class, this::playerSpawn);
         playerParent.addListener(PlayerPacketOutEvent.class, this::playerEffect);
         playerParent.addListener(PlayerPacketOutEvent.class, this::playerVelocity);
+        playerParent.addListener(PlayerPacketOutEvent.class, this::playerPassengers);
         node.addChild(playerParent);
     }
 
 
     private void handlePlayerPacketInput(PlayerPacketEvent event) {
         // It would be neat if we could do a switch on event.getPacket(), and then handle the individual cases, but that's in Java 17 preview :(
-        if(event.getPacket() instanceof ClientPlayerPositionPacket positionPacket) {
+        if (event.getPacket() instanceof ClientPlayerPositionPacket positionPacket) {
             Disguise disguise = parentManager.getPlayerDisguise(event.getPlayer());
-            if(disguise != null) {
+            if (disguise != null) {
                 // Translate player move to disguise move
                 // Calculate delta
                 // Why this particular calculation? Ask https://wiki.vg/Protocol#Update_Entity_Position
@@ -55,17 +57,17 @@ public final class DisguiseEvents {
                 EntityPositionPacket disguisePositionPacket = new EntityPositionPacket(disguise.getEntityId(), xDiff, yDiff, zDiff, positionPacket.onGround());
                 PacketUtils.sendGroupedPacket(disguise.getViewers(), disguisePositionPacket);
             }
-        } else if(event.getPacket() instanceof ClientPlayerRotationPacket rotationPacket) {
+        } else if (event.getPacket() instanceof ClientPlayerRotationPacket rotationPacket) {
             Disguise disguise = parentManager.getPlayerDisguise(event.getPlayer());
-            if(disguise != null) {
+            if (disguise != null) {
                 // Translate player head move to disguise head move
                 EntityRotationPacket disguisePositionPacket = new EntityRotationPacket(disguise.getEntityId(), rotationPacket.yaw(), rotationPacket.pitch(), rotationPacket.onGround());
                 PacketUtils.sendGroupedPacket(disguise.getViewers(), disguisePositionPacket);
             }
-        } else if(event.getPacket() instanceof ClientInteractEntityPacket interactEntityPacket) {
+        } else if (event.getPacket() instanceof ClientInteractEntityPacket interactEntityPacket) {
             // Inversion! We want to see if a player interacted with a disguise and translate internally from there
             Player trueTarget = parentManager.getPlayerFromDisguise(interactEntityPacket.targetId());
-            if(trueTarget != null) {
+            if (trueTarget != null) {
                 // Interaction safety checks
                 if (event.getPlayer().getDistance(trueTarget) < 6 && !trueTarget.isDead()) {
                     ClientInteractEntityPacket.Type type = interactEntityPacket.type();
@@ -83,9 +85,9 @@ public final class DisguiseEvents {
     }
 
     private void playerEntityAnimation(PlayerPacketOutEvent event) {
-        if(event.getPacket() instanceof EntityAnimationPacket packet) {
+        if (event.getPacket() instanceof EntityAnimationPacket packet) {
             Disguise disguise = parentManager.getPlayerDisguise(event.getPlayer());
-            if(disguise != null) {
+            if (disguise != null) {
                 // Translate animation from player to disguise
                 // TODO: Check to see which animations may not need translation, may have to check per entity type
                 EntityAnimationPacket newPacket = new EntityAnimationPacket(disguise.getEntityId(), packet.animation());
@@ -95,9 +97,9 @@ public final class DisguiseEvents {
     }
 
     private void playerTeleport(PlayerPacketOutEvent event) {
-        if(event.getPacket() instanceof EntityTeleportPacket packet) {
+        if (event.getPacket() instanceof EntityTeleportPacket packet) {
             Disguise disguise = parentManager.getPlayerDisguise(event.getPlayer());
-            if(disguise != null) {
+            if (disguise != null) {
                 EntityTeleportPacket newPacket = new EntityTeleportPacket(disguise.getEntityId(), packet.position(), packet.onGround());
                 PacketUtils.sendGroupedPacket(disguise.getViewers(), newPacket);
             }
@@ -105,11 +107,11 @@ public final class DisguiseEvents {
     }
 
     private void playerSpawn(PlayerPacketOutEvent event) {
-        if(event.getPacket() instanceof SpawnPlayerPacket packet) {
+        if (event.getPacket() instanceof SpawnPlayerPacket packet) {
             Player player = MinecraftServer.getConnectionManager().getPlayer(packet.playerUuid());
-            if(player != null) {
+            if (player != null) {
                 Disguise disguise = parentManager.getPlayerDisguise(player);
-                if(disguise != null) {
+                if (disguise != null) {
                     player.removeViewer(event.getPlayer());
                     disguise.addViewer(event.getPlayer());
                 }
@@ -118,18 +120,18 @@ public final class DisguiseEvents {
     }
 
     private void playerEffect(PlayerPacketOutEvent event) {
-        if(event.getPacket() instanceof EntityEffectPacket packet) {
+        if (event.getPacket() instanceof EntityEffectPacket packet) {
             Player player = event.getPlayer();
             Disguise disguise = parentManager.getPlayerDisguise(player);
-            if(disguise != null) {
+            if (disguise != null) {
                 EntityEffectPacket newPacket = new EntityEffectPacket(disguise.getEntityId(), packet.potion(), packet.factorCodec());
                 PacketUtils.sendGroupedPacket(disguise.getViewers(), newPacket);
             }
         }
-        if(event.getPacket() instanceof RemoveEntityEffectPacket packet) {
+        if (event.getPacket() instanceof RemoveEntityEffectPacket packet) {
             Player player = event.getPlayer();
             Disguise disguise = parentManager.getPlayerDisguise(player);
-            if(disguise != null) {
+            if (disguise != null) {
                 RemoveEntityEffectPacket newPacket = new RemoveEntityEffectPacket(disguise.getEntityId(), packet.potionEffect());
                 PacketUtils.sendGroupedPacket(disguise.getViewers(), newPacket);
             }
@@ -137,12 +139,25 @@ public final class DisguiseEvents {
     }
 
     private void playerVelocity(PlayerPacketOutEvent event) {
-        if(event.getPacket() instanceof EntityVelocityPacket packet) {
+        if (event.getPacket() instanceof EntityVelocityPacket packet) {
             Player player = event.getPlayer();
             Disguise disguise = parentManager.getPlayerDisguise(player);
-            if(disguise != null) {
+            if (disguise != null) {
                 EntityVelocityPacket newPacket = new EntityVelocityPacket(packet.entityId(), packet.velocityX(), packet.velocityY(), packet.velocityZ());
                 PacketUtils.sendGroupedPacket(disguise.getViewers(), newPacket);
+            }
+        }
+    }
+
+    private void playerPassengers(PlayerPacketOutEvent event) {
+        if (event.getPacket() instanceof SetPassengersPacket packet) {
+            Player player = event.getPlayer();
+            if (packet.vehicleEntityId() == packet.getId()) {
+                Disguise disguise = parentManager.getPlayerDisguise(player);
+                if (disguise != null) {
+                    SetPassengersPacket newPacket = new SetPassengersPacket(disguise.getEntityId(), packet.passengersId());
+                    PacketUtils.sendGroupedPacket(disguise.getViewers(), newPacket);
+                }
             }
         }
     }
