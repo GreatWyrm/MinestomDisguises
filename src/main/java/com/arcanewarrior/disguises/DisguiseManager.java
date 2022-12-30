@@ -30,7 +30,7 @@ public final class DisguiseManager {
     // ---------------- DISGUISING PLAYERS --------------
 
     public void disguisePlayer(Player player, EntityType type) {
-        disguisePlayer(player, new Disguise(type, player));
+        disguisePlayer(player, new Disguise(type, player, this));
     }
     public void disguisePlayer(Player player, Disguise disguise) {
         if(player.getInstance() == null) {

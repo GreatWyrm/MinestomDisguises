@@ -7,18 +7,20 @@ import org.jetbrains.annotations.NotNull;
 
 public final class Disguise extends LivingEntity {
 
+    private final DisguiseManager manager;
     private final Player player;
 
-    public Disguise(@NotNull EntityType entityType, @NotNull Player player) {
+    public Disguise(@NotNull EntityType entityType, @NotNull Player player, @NotNull DisguiseManager manager) {
         super(entityType);
         this.player = player;
+        this.manager = manager;
     }
 
     public Player getPlayer() {
         return player;
     }
 
-    public void unDisguise() {
-        MinestomDisguises.getInstance().getDisguiseManager().unDisguisePlayer(getPlayer());
+    public void undisguise() {
+       manager.unDisguisePlayer(getPlayer());
     }
 }
