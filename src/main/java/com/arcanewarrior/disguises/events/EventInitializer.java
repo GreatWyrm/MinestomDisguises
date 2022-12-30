@@ -11,9 +11,11 @@ import net.minestom.server.tag.Tag;
 
 public record EventInitializer(EventNode<Event> node, Tag<Boolean> hideTag) {
 
+    private static final String nodeName = "disguises-player-events";
+
     public void registerAll() {
         // Player Events
-        EventNode<PlayerEvent> playerParent = EventNode.type("disguises-player-events", EventFilter.PLAYER);
+        EventNode<PlayerEvent> playerParent = EventNode.type(nodeName, EventFilter.PLAYER);
         // Automatically make players hide
         playerParent.addListener(PlayerLoginEvent.class, event -> event.getPlayer().updateViewerRule(entity -> !entity.hasTag(hideTag)));
         // Register Disguise Events
@@ -24,6 +26,6 @@ public record EventInitializer(EventNode<Event> node, Tag<Boolean> hideTag) {
     }
 
     public void unregisterAll() {
-        node.removeChildren("disguises-player-events");
+        node.removeChildren(nodeName);
     }
 }
