@@ -35,6 +35,7 @@ public final class DisguiseEvents {
         playerParent.addListener(PlayerPacketOutEvent.class, this::playerTeleport);
         playerParent.addListener(PlayerPacketOutEvent.class, this::playerSpawn);
         playerParent.addListener(PlayerPacketOutEvent.class, this::playerEffect);
+        playerParent.addListener(PlayerPacketOutEvent.class, this::playerVelocity);
         node.addChild(playerParent);
     }
 
@@ -85,7 +86,6 @@ public final class DisguiseEvents {
         if(event.getPacket() instanceof EntityAnimationPacket packet) {
             Disguise disguise = parentManager.getPlayerDisguise(event.getPlayer());
             if(disguise != null) {
-                EntityAnimationPacket.Animation animation = packet.animation();
                 // Translate animation from player to disguise
                 // TODO: Check to see which animations may not need translation, may have to check per entity type
                 EntityAnimationPacket newPacket = new EntityAnimationPacket(disguise.getEntityId(), packet.animation());
@@ -131,6 +131,17 @@ public final class DisguiseEvents {
             Disguise disguise = parentManager.getPlayerDisguise(player);
             if(disguise != null) {
                 RemoveEntityEffectPacket newPacket = new RemoveEntityEffectPacket(disguise.getEntityId(), packet.potionEffect());
+                PacketUtils.sendGroupedPacket(disguise.getViewers(), newPacket);
+            }
+        }
+    }
+
+    private void playerVelocity(PlayerPacketOutEvent event) {
+        if(event.getPacket() instanceof EntityVelocityPacket packet) {
+            Player player = event.getPlayer();
+            Disguise disguise = parentManager.getPlayerDisguise(player);
+            if(disguise != null) {
+                EntityVelocityPacket newPacket = new EntityVelocityPacket(packet.entityId(), packet.velocityX(), packet.velocityY(), packet.velocityZ());
                 PacketUtils.sendGroupedPacket(disguise.getViewers(), newPacket);
             }
         }
