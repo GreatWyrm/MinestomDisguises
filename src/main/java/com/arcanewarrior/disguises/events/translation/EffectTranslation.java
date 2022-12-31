@@ -8,9 +8,8 @@ import net.minestom.server.network.packet.server.play.EntityEffectPacket;
 import net.minestom.server.network.packet.server.play.RemoveEntityEffectPacket;
 import net.minestom.server.utils.PacketUtils;
 
-public final class EffectTranslation implements DisguiseTranslation<PlayerPacketOutEvent> {
-    @Override
-    public void listener(PlayerPacketOutEvent event, DisguiseManager parentManager) {
+public final class EffectTranslation {
+    public static void listener(PlayerPacketOutEvent event, DisguiseManager parentManager) {
         if (event.getPacket() instanceof EntityEffectPacket packet) {
             Player player = event.getPlayer();
             Disguise disguise = parentManager.getPlayerDisguise(player);

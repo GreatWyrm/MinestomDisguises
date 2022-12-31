@@ -7,9 +7,8 @@ import net.minestom.server.event.player.PlayerPacketOutEvent;
 import net.minestom.server.network.packet.server.play.SetPassengersPacket;
 import net.minestom.server.utils.PacketUtils;
 
-public final class PassengerTranslation implements DisguiseTranslation<PlayerPacketOutEvent> {
-    @Override
-    public void listener(PlayerPacketOutEvent event, DisguiseManager parentManager) {
+public final class PassengerTranslation {
+    public static void listener(PlayerPacketOutEvent event, DisguiseManager parentManager) {
         if (event.getPacket() instanceof SetPassengersPacket packet) {
             Player player = event.getPlayer();
             if (packet.vehicleEntityId() == player.getEntityId()) {

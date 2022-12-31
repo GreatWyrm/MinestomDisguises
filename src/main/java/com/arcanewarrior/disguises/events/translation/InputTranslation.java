@@ -14,9 +14,8 @@ import net.minestom.server.network.packet.server.play.EntityPositionPacket;
 import net.minestom.server.network.packet.server.play.EntityRotationPacket;
 import net.minestom.server.utils.PacketUtils;
 
-public final class InputTranslation implements DisguiseTranslation<PlayerPacketEvent> {
-    @Override
-    public void listener(PlayerPacketEvent event, DisguiseManager parentManager) {
+public final class InputTranslation {
+    public static void listener(PlayerPacketEvent event, DisguiseManager parentManager) {
         // It would be neat if we could do a switch on event.getPacket(), and then handle the individual cases, but that's in Java 17 preview :(
         if (event.getPacket() instanceof ClientPlayerPositionPacket positionPacket) {
             Disguise disguise = parentManager.getPlayerDisguise(event.getPlayer());
