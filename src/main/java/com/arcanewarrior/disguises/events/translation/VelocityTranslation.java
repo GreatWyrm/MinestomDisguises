@@ -7,9 +7,8 @@ import net.minestom.server.event.player.PlayerPacketOutEvent;
 import net.minestom.server.network.packet.server.play.EntityVelocityPacket;
 import net.minestom.server.utils.PacketUtils;
 
-public final class VelocityTranslation implements DisguiseTranslation<PlayerPacketOutEvent> {
-    @Override
-    public void listener(PlayerPacketOutEvent event, DisguiseManager parentManager) {
+public final class VelocityTranslation {
+    public static void listener(PlayerPacketOutEvent event, DisguiseManager parentManager) {
         if (event.getPacket() instanceof EntityVelocityPacket packet) {
             Player player = event.getPlayer();
             Disguise disguise = parentManager.getPlayerDisguise(player);

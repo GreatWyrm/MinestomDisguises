@@ -6,9 +6,8 @@ import net.minestom.server.event.player.PlayerPacketOutEvent;
 import net.minestom.server.network.packet.server.play.EntityAnimationPacket;
 import net.minestom.server.utils.PacketUtils;
 
-public final class AnimationTranslation implements DisguiseTranslation<PlayerPacketOutEvent> {
-    @Override
-    public void listener(PlayerPacketOutEvent event, DisguiseManager parentManager) {
+public final class AnimationTranslation {
+    public static void listener(PlayerPacketOutEvent event, DisguiseManager parentManager) {
         if (event.getPacket() instanceof EntityAnimationPacket packet) {
             Disguise disguise = parentManager.getPlayerDisguise(event.getPlayer());
             if (disguise != null) {

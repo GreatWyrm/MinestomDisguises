@@ -7,9 +7,8 @@ import net.minestom.server.entity.Player;
 import net.minestom.server.event.player.PlayerPacketOutEvent;
 import net.minestom.server.network.packet.server.play.SpawnPlayerPacket;
 
-public final class SpawnTranslation implements DisguiseTranslation<PlayerPacketOutEvent> {
-    @Override
-    public void listener(PlayerPacketOutEvent event, DisguiseManager parentManager) {
+public final class SpawnTranslation {
+    public static void listener(PlayerPacketOutEvent event, DisguiseManager parentManager) {
         if (event.getPacket() instanceof SpawnPlayerPacket packet) {
             Player player = MinecraftServer.getConnectionManager().getPlayer(packet.playerUuid());
             if (player != null && !player.equals(event.getPlayer())) {
