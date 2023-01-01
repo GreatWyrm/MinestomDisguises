@@ -1,4 +1,4 @@
-package com.arcanewarrior.disguises.events.translation;
+package com.arcanewarrior.disguises.listeners.translation;
 
 import com.arcanewarrior.disguises.Disguise;
 import com.arcanewarrior.disguises.DisguiseManager;

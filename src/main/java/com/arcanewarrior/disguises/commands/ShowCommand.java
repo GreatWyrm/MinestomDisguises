@@ -1,6 +1,7 @@
 package com.arcanewarrior.disguises.commands;
 
 import com.arcanewarrior.disguises.DisguiseManager;
+import net.minestom.server.MinecraftServer;
 import net.minestom.server.command.builder.Command;
 import net.minestom.server.command.builder.arguments.ArgumentType;
 import net.minestom.server.command.builder.arguments.minecraft.ArgumentEntity;

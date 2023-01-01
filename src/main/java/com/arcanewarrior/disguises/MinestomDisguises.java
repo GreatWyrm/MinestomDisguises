@@ -1,7 +1,7 @@
 package com.arcanewarrior.disguises;
 
 import com.arcanewarrior.disguises.commands.CommandInitializer;
-import com.arcanewarrior.disguises.events.EventInitializer;
+import com.arcanewarrior.disguises.listeners.EventInitializer;
 import com.moandjiezana.toml.Toml;
 import net.minestom.server.MinecraftServer;
 import net.minestom.server.tag.Tag;
@@ -13,24 +13,22 @@ public final class MinestomDisguises extends Extension {
     private CommandInitializer commandInitializer;
     private EventInitializer eventInitializer;
     private DisguiseManager disguiseManager;
-
+    private Toml config;
     private final Tag<Boolean> hideTag = Tag.Boolean("disguises-hidden");
 
     @Override
     public void initialize() {
         instance = this;
 
-        final Toml config = getConfig();
+        config = getConfig();
 
         eventInitializer = new EventInitializer(getEventNode(), hideTag);
         disguiseManager = new DisguiseManager(hideTag);
         eventInitializer.registerAll();
 
-        if(config != null) {
-            if (!config.getBoolean("only-api", false)) {
-                commandInitializer = new CommandInitializer(disguiseManager);
-                commandInitializer.registerAll(this);
-            }
+        if (!config.getTable("extension").getBoolean("only-api", false)) {
+            commandInitializer = new CommandInitializer(disguiseManager);
+            commandInitializer.registerAll(this);
         }
     }
 
@@ -46,5 +44,9 @@ public final class MinestomDisguises extends Extension {
 
     public DisguiseManager getDisguiseManager() {
         return disguiseManager;
+    }
+
+    public Toml getConfiguration() {
+        return config;
     }
 }

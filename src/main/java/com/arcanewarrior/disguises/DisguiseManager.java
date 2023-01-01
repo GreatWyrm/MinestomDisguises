@@ -1,8 +1,11 @@
 package com.arcanewarrior.disguises;
 
+import com.arcanewarrior.disguises.events.PlayerDisguiseEvent;
+import com.arcanewarrior.disguises.events.PlayerUndisguiseEvent;
 import net.minestom.server.MinecraftServer;
 import net.minestom.server.entity.EntityType;
 import net.minestom.server.entity.Player;
+import net.minestom.server.network.packet.server.play.DestroyEntitiesPacket;
 import net.minestom.server.network.packet.server.play.TeamsPacket;
 import net.minestom.server.scoreboard.Team;
 import net.minestom.server.scoreboard.TeamManager;
@@ -37,6 +40,9 @@ public final class DisguiseManager {
             logger.warn("Failed to disguise " + player.getUsername() + ", as they are in a null instance!");
             return;
         }
+        PlayerDisguiseEvent event = new PlayerDisguiseEvent(player, disguise);
+        MinecraftServer.getGlobalEventHandler().call(event);
+        if(event.isCancelled()) return;
         hidePlayer(player);
         logger.info("Disguising " + player.getUsername() + " as a " + disguise.getEntityType().name());
         disguise.setTeam(disguiseTeam);
@@ -54,8 +60,11 @@ public final class DisguiseManager {
             logger.warn("Tried to remove the disguise from " + player.getUsername() + ", but they weren't disguised!");
             return;
         }
-        disguisedPlayers.get(player).remove();
-        disguisedPlayers.remove(player);
+        Disguise disguise = disguisedPlayers.get(player);
+        PlayerUndisguiseEvent event = new PlayerUndisguiseEvent(player, disguise);
+        if(event.isCancelled()) return;
+        disguise.remove();
+        disguisedPlayers.remove(player, disguise);
         showPlayer(player);
     }
 
@@ -97,8 +106,10 @@ public final class DisguiseManager {
             }
         }
         for(Player hidden : toUpdate)
-            for(Player player : hidden.getViewers())
+            for(Player player : hidden.getViewers()) {
                 hidden.removeViewer(player);
+                player.sendPacket(new DestroyEntitiesPacket(hidden.getEntityId()));
+            }
     }
 
     public void showPlayer(Player player) {

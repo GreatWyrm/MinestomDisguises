@@ -1,1 +1,5 @@
+[extension]
 only-api = false # If true it removes commands and allow only to disguise via api
+
+[disguises]
+translate-player-names = true # If true it translates player names
