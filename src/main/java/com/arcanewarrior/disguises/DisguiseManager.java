@@ -45,7 +45,10 @@ public final class DisguiseManager {
         if(event.isCancelled()) return;
         hidePlayer(player);
         logger.info("Disguising " + player.getUsername() + " as a " + disguise.getEntityType().name());
-        disguise.setTeam(disguiseTeam);
+        if(MinestomDisguises.getInstance().getConfiguration().getTable("disguises").getBoolean("translate-teams"))
+            disguise.setTeam(disguiseTeam);
+        else
+            disguise.setTeam(player.getTeam());
         disguise.setAutoViewable(false);
         if(player.getInstance() != disguise.getInstance())
             disguise.setInstance(player.getInstance(), player.getPosition());

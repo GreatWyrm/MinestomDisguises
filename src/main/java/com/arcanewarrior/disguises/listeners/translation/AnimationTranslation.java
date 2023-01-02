@@ -2,6 +2,7 @@ package com.arcanewarrior.disguises.listeners.translation;
 
 import com.arcanewarrior.disguises.Disguise;
 import com.arcanewarrior.disguises.DisguiseManager;
+import net.minestom.server.entity.Player;
 import net.minestom.server.event.player.PlayerHandAnimationEvent;
 import net.minestom.server.event.player.PlayerItemAnimationEvent;
 import net.minestom.server.event.trait.PlayerEvent;
@@ -22,8 +23,7 @@ public final class AnimationTranslation {
                 // Translate animation from player to disguise
                 // TODO: Check to see which animations may not need translation, may have to check per entity type
                 if(!e.isCancelled()) {
-                    // TODO: Check hand
-                    disguise.refreshActiveHand(true, false, false);
+                    disguise.refreshActiveHand(true, e.getHand() == Player.Hand.OFF, false);
                     disguise.sendPacketToViewers(disguise.getMetadataPacket());
                 }
             }

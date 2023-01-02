@@ -19,6 +19,7 @@ public final class Disguise extends LivingEntity {
             setCustomName(Component.text(player.getUsername()));
             setCustomNameVisible(true);
         }
+        setNoGravity(true);
     }
 
     public Player getPlayer() {
