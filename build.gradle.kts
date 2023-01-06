@@ -1,5 +1,6 @@
 plugins {
     id("java")
+    `maven-publish`
 }
 
 group = "com.arcanewarrior"
@@ -11,12 +12,20 @@ repositories {
 }
 
 dependencies {
-    compileOnly("com.github.Minestom:Minestom:809d9516b2")
-    compileOnly("com.github.CityWideMC:CityStom:8f9625559f")
+    compileOnly("com.github.Minestom.Minestom:Minestom:f291437ada")
+    compileOnly("com.github.CityWideMC:CityStom:1.4.0")
 }
 
 java {
     toolchain {
         languageVersion.set(JavaLanguageVersion.of(17))
+    }
+}
+
+publishing {
+    publications {
+        create<MavenPublication>("maven") {
+            from(components["java"])
+        }
     }
 }

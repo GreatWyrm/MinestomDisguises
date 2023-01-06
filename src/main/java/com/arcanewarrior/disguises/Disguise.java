@@ -1,5 +1,6 @@
 package com.arcanewarrior.disguises;
 
+import net.kyori.adventure.text.Component;
 import net.minestom.server.entity.EntityType;
 import net.minestom.server.entity.LivingEntity;
 import net.minestom.server.entity.Player;
@@ -14,6 +15,11 @@ public final class Disguise extends LivingEntity {
         super(entityType);
         this.player = player;
         this.manager = manager;
+        if(manager.getConfig().getTable("disguises").getBoolean("translate-player-names", true)) {
+            setCustomName(Component.text(player.getUsername()));
+            setCustomNameVisible(true);
+        }
+        setNoGravity(true);
     }
 
     public Player getPlayer() {

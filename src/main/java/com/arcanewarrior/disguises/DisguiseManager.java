@@ -1,8 +1,12 @@
 package com.arcanewarrior.disguises;
 
+import com.arcanewarrior.disguises.events.PlayerDisguiseEvent;
+import com.arcanewarrior.disguises.events.PlayerUndisguiseEvent;
+import com.moandjiezana.toml.Toml;
 import net.minestom.server.MinecraftServer;
 import net.minestom.server.entity.EntityType;
 import net.minestom.server.entity.Player;
+import net.minestom.server.network.packet.server.play.DestroyEntitiesPacket;
 import net.minestom.server.network.packet.server.play.TeamsPacket;
 import net.minestom.server.scoreboard.Team;
 import net.minestom.server.scoreboard.TeamManager;
@@ -16,14 +20,16 @@ import java.util.*;
 
 public final class DisguiseManager {
 
+    private final Toml config;
     private final Tag<Boolean> hideTag;
     private final Map<Player, Disguise> disguisedPlayers = new HashMap<>();
     private final Logger logger = LoggerFactory.getLogger(DisguiseManager.class);
     private final TeamManager teamManager = new TeamManager();
     private final Team disguiseTeam = teamManager.createBuilder("disguises").collisionRule(TeamsPacket.CollisionRule.NEVER).build();
 
-    public DisguiseManager(Tag<Boolean> hideTag) {
+    public DisguiseManager(Tag<Boolean> hideTag, Toml config) {
         this.hideTag = hideTag;
+        this.config = config;
     }
 
 
@@ -37,9 +43,15 @@ public final class DisguiseManager {
             logger.warn("Failed to disguise " + player.getUsername() + ", as they are in a null instance!");
             return;
         }
+        PlayerDisguiseEvent event = new PlayerDisguiseEvent(player, disguise);
+        MinecraftServer.getGlobalEventHandler().call(event);
+        if(event.isCancelled()) return;
         hidePlayer(player);
         logger.info("Disguising " + player.getUsername() + " as a " + disguise.getEntityType().name());
-        disguise.setTeam(disguiseTeam);
+        if(getConfig().getTable("disguises").getBoolean("translate-teams"))
+            disguise.setTeam(disguiseTeam);
+        else
+            disguise.setTeam(player.getTeam());
         disguise.setAutoViewable(false);
         if(player.getInstance() != disguise.getInstance())
             disguise.setInstance(player.getInstance(), player.getPosition());
@@ -54,8 +66,11 @@ public final class DisguiseManager {
             logger.warn("Tried to remove the disguise from " + player.getUsername() + ", but they weren't disguised!");
             return;
         }
-        disguisedPlayers.get(player).remove();
-        disguisedPlayers.remove(player);
+        Disguise disguise = disguisedPlayers.get(player);
+        PlayerUndisguiseEvent event = new PlayerUndisguiseEvent(player, disguise);
+        if(event.isCancelled()) return;
+        disguise.remove();
+        disguisedPlayers.remove(player, disguise);
         showPlayer(player);
     }
 
@@ -97,8 +112,10 @@ public final class DisguiseManager {
             }
         }
         for(Player hidden : toUpdate)
-            for(Player player : hidden.getViewers())
+            for(Player player : hidden.getViewers()) {
                 hidden.removeViewer(player);
+                player.sendPacket(new DestroyEntitiesPacket(hidden.getEntityId()));
+            }
     }
 
     public void showPlayer(Player player) {
@@ -132,6 +149,10 @@ public final class DisguiseManager {
             if(!player.hasTag(hideTag))
                 usernames.add(player.getUsername());
         return usernames;
+    }
+
+    public Toml getConfig() {
+        return config;
     }
 
     // ---- EVENT TRIGGERS -----

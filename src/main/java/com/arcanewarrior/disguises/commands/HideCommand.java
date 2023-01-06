@@ -27,7 +27,7 @@ public class HideCommand extends Command {
             List<Player> toHide = new ArrayList<>();
             for(Entity entity : playerList) {
                 if(entity instanceof Player player) {
-                   toHide.add(player);
+                    toHide.add(player);
                 }
             }
             disguiseManager.hidePlayers(toHide);
