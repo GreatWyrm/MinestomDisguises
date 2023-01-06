@@ -12,7 +12,7 @@ repositories {
 }
 
 dependencies {
-    compileOnly("com.github.CityWideMC.Minestom:Minestom:fe815c61d6")
+    compileOnly("com.github.Minestom.Minestom:Minestom:f291437ada")
     compileOnly("com.github.CityWideMC:CityStom:1.4.0")
 }
 

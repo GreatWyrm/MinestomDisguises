@@ -15,7 +15,7 @@ public final class Disguise extends LivingEntity {
         super(entityType);
         this.player = player;
         this.manager = manager;
-        if(MinestomDisguises.getInstance().getConfiguration().getTable("disguises").getBoolean("translate-player-names", true)) {
+        if(manager.getConfig().getTable("disguises").getBoolean("translate-player-names", true)) {
             setCustomName(Component.text(player.getUsername()));
             setCustomNameVisible(true);
         }

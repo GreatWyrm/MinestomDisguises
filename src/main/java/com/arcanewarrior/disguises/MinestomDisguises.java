@@ -13,17 +13,17 @@ public final class MinestomDisguises extends Extension {
     private CommandInitializer commandInitializer;
     private EventInitializer eventInitializer;
     private DisguiseManager disguiseManager;
-    private Toml config;
     private final Tag<Boolean> hideTag = Tag.Boolean("disguises-hidden");
 
     @Override
     public void initialize() {
         instance = this;
 
-        config = getConfig();
+        final Toml config = getConfig();
+        if(config == null) return;
 
         eventInitializer = new EventInitializer(getEventNode(), hideTag);
-        disguiseManager = new DisguiseManager(hideTag);
+        disguiseManager = new DisguiseManager(hideTag, config);
         eventInitializer.registerAll();
 
         if (!config.getTable("extension").getBoolean("only-api", false)) {
@@ -44,9 +44,5 @@ public final class MinestomDisguises extends Extension {
 
     public DisguiseManager getDisguiseManager() {
         return disguiseManager;
-    }
-
-    public Toml getConfiguration() {
-        return config;
     }
 }

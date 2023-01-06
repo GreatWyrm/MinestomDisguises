@@ -1,7 +1,6 @@
 package com.arcanewarrior.disguises.listeners;
 
 import com.arcanewarrior.disguises.DisguiseManager;
-import com.arcanewarrior.disguises.MinestomDisguises;
 import com.arcanewarrior.disguises.listeners.translation.*;
 import net.minestom.server.event.EventFilter;
 import net.minestom.server.event.EventNode;
@@ -69,9 +68,7 @@ public final class DisguiseEvents {
         ServerPacket packet = event.getPacket();
         if (packet instanceof SetPassengersPacket)
             PassengerTranslation.listener(event, parentManager);
-        else if (packet instanceof SpawnPlayerPacket)
-            SpawnTranslation.listener(event, parentManager);
-        else if (packet instanceof PlayerPacketOutEvent && MinestomDisguises.getInstance().getConfiguration().getTable("disguises").getBoolean("translate-teams"))
+        else if (packet instanceof PlayerPacketOutEvent && parentManager.getConfig().getTable("disguises").getBoolean("translate-teams"))
             TeamTranslation.listener(event, parentManager);
     }
 

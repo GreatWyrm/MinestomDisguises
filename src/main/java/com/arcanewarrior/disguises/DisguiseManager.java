@@ -2,6 +2,7 @@ package com.arcanewarrior.disguises;
 
 import com.arcanewarrior.disguises.events.PlayerDisguiseEvent;
 import com.arcanewarrior.disguises.events.PlayerUndisguiseEvent;
+import com.moandjiezana.toml.Toml;
 import net.minestom.server.MinecraftServer;
 import net.minestom.server.entity.EntityType;
 import net.minestom.server.entity.Player;
@@ -19,14 +20,16 @@ import java.util.*;
 
 public final class DisguiseManager {
 
+    private final Toml config;
     private final Tag<Boolean> hideTag;
     private final Map<Player, Disguise> disguisedPlayers = new HashMap<>();
     private final Logger logger = LoggerFactory.getLogger(DisguiseManager.class);
     private final TeamManager teamManager = new TeamManager();
     private final Team disguiseTeam = teamManager.createBuilder("disguises").collisionRule(TeamsPacket.CollisionRule.NEVER).build();
 
-    public DisguiseManager(Tag<Boolean> hideTag) {
+    public DisguiseManager(Tag<Boolean> hideTag, Toml config) {
         this.hideTag = hideTag;
+        this.config = config;
     }
 
 
@@ -45,7 +48,7 @@ public final class DisguiseManager {
         if(event.isCancelled()) return;
         hidePlayer(player);
         logger.info("Disguising " + player.getUsername() + " as a " + disguise.getEntityType().name());
-        if(MinestomDisguises.getInstance().getConfiguration().getTable("disguises").getBoolean("translate-teams"))
+        if(getConfig().getTable("disguises").getBoolean("translate-teams"))
             disguise.setTeam(disguiseTeam);
         else
             disguise.setTeam(player.getTeam());
@@ -146,6 +149,10 @@ public final class DisguiseManager {
             if(!player.hasTag(hideTag))
                 usernames.add(player.getUsername());
         return usernames;
+    }
+
+    public Toml getConfig() {
+        return config;
     }
 
     // ---- EVENT TRIGGERS -----
