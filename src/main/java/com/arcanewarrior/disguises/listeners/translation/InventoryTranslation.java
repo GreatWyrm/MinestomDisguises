@@ -27,8 +27,8 @@ public final class InventoryTranslation {
             Player player = e.getPlayer();
             Disguise disguise = parentManager.getPlayerDisguise(player);
             if(disguise != null) {
-                player.setItemInMainHand(e.getMainHandItem());
-                player.setItemInOffHand(e.getOffHandItem());
+                disguise.setItemInMainHand(e.getMainHandItem());
+                disguise.setItemInOffHand(e.getOffHandItem());
             }
         }
     }
