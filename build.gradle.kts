@@ -1,10 +1,11 @@
 plugins {
     id("java")
     `maven-publish`
+    id("com.github.johnrengelman.shadow") version "7.1.2"
 }
 
 group = "com.arcanewarrior"
-version = "0.0.3"
+version = "0.0.4"
 
 repositories {
     mavenCentral()
@@ -28,4 +29,9 @@ publishing {
             from(components["java"])
         }
     }
+}
+
+
+tasks.withType<com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar> {
+    archiveClassifier.set("")
 }

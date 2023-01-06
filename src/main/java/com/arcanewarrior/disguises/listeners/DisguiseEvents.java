@@ -13,7 +13,7 @@ import net.minestom.server.event.trait.PlayerEvent;
 import net.minestom.server.network.packet.client.ClientPacket;
 import net.minestom.server.network.packet.client.play.ClientInteractEntityPacket;
 import net.minestom.server.network.packet.server.ServerPacket;
-import net.minestom.server.network.packet.server.play.*;
+import net.minestom.server.network.packet.server.play.SetPassengersPacket;
 
 public final class DisguiseEvents {
     private final DisguiseManager parentManager;

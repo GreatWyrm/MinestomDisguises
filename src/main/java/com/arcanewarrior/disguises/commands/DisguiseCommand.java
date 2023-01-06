@@ -11,6 +11,7 @@ import net.minestom.server.entity.EntityType;
 import net.minestom.server.entity.Player;
 
 import java.util.List;
+import java.util.Locale;
 
 public class DisguiseCommand extends Command {
     public DisguiseCommand(DisguiseManager manager) {
@@ -18,25 +19,30 @@ public class DisguiseCommand extends Command {
 
         ArgumentEntity players = ArgumentType.Entity("players").onlyPlayers(true);
         ArgumentEntityType disguiseType = ArgumentType.EntityType("disguise");
-        ArgumentWord removeArg = ArgumentType.Word("remove").from("remove");
+        ArgumentWord modeArg = ArgumentType.Word("mode").from("add", "remove");
 
         addSyntax((sender, context) -> {
-            List<Entity> playerList = context.get(players).find(sender);
-            EntityType type = context.get(disguiseType);
-            for(Entity entity : playerList) {
-                if(entity instanceof Player player) {
-                    manager.disguisePlayer(player, type);
+            if(context.get(modeArg).toLowerCase(Locale.ROOT).equals("remove")) {
+                List<Entity> playerList = context.get(players).find(sender);
+                for(Entity entity : playerList) {
+                    if(entity instanceof Player player) {
+                        manager.undisguisePlayer(player);
+                    }
                 }
             }
-        }, players, disguiseType);
+
+        }, modeArg, players);
 
         addSyntax((sender, context) -> {
-            List<Entity> playerList = context.get(players).find(sender);
-            for(Entity entity : playerList) {
-                if(entity instanceof Player player) {
-                    manager.undisguisePlayer(player);
+            if(context.get(modeArg).toLowerCase(Locale.ROOT).equals("add")) {
+                List<Entity> playerList = context.get(players).find(sender);
+                EntityType type = context.get(disguiseType);
+                for (Entity entity : playerList) {
+                    if (entity instanceof Player player) {
+                        manager.disguisePlayer(player, type);
+                    }
                 }
             }
-        }, removeArg, players);
+        }, modeArg, players, disguiseType);
     }
 }
