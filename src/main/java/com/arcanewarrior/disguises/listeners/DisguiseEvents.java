@@ -41,6 +41,8 @@ public final class DisguiseEvents {
 
     private EventNode<PlayerEvent> inventoryTranslations() {
         EventNode<PlayerEvent> node = EventNode.type("inventory", EventFilter.PLAYER);
+        // Low priority in case the events are modified in other nodes
+        node.setPriority(-1000);
         node.addListener(PlayerChangeHeldSlotEvent.class, event -> InventoryTranslation.listener(event, parentManager));
         node.addListener(PlayerSwapItemEvent.class, event -> InventoryTranslation.listener(event, parentManager));
         node.addListener(PlayerInventoryItemChangeEvent.class, event -> InventoryTranslation.listener(event, parentManager));
