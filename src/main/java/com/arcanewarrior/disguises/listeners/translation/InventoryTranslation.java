@@ -8,6 +8,7 @@ import net.minestom.server.event.inventory.PlayerInventoryItemChangeEvent;
 import net.minestom.server.event.player.PlayerChangeHeldSlotEvent;
 import net.minestom.server.event.player.PlayerSwapItemEvent;
 import net.minestom.server.event.trait.PlayerEvent;
+import net.minestom.server.utils.inventory.PlayerInventoryUtils;
 
 public final class InventoryTranslation {
     public static void listener(PlayerEvent event, DisguiseManager parentManager) {
@@ -19,9 +20,22 @@ public final class InventoryTranslation {
         } else if (event instanceof PlayerInventoryItemChangeEvent e) {
             Player player = e.getPlayer();
             Disguise disguise = parentManager.getPlayerDisguise(player);
-            if(disguise != null)
-                for(EquipmentSlot slot : EquipmentSlot.values())
-                    disguise.setEquipment(slot, player.getEquipment(slot));
+            int slotIndex = e.getSlot();
+            if(disguise == null) return;
+
+            if (slotIndex == player.getHeldSlot()) {
+                disguise.setEquipment(EquipmentSlot.MAIN_HAND, e.getNewItem());
+            } else if(slotIndex == PlayerInventoryUtils.OFFHAND_SLOT) {
+                disguise.setEquipment(EquipmentSlot.OFF_HAND, e.getNewItem());
+            } else if (slotIndex == PlayerInventoryUtils.BOOTS_SLOT) {
+                disguise.setEquipment(EquipmentSlot.BOOTS, e.getNewItem());
+            } else if (slotIndex == PlayerInventoryUtils.LEGGINGS_SLOT) {
+                disguise.setEquipment(EquipmentSlot.LEGGINGS, e.getNewItem());
+            } else if (slotIndex == PlayerInventoryUtils.CHESTPLATE_SLOT) {
+                disguise.setEquipment(EquipmentSlot.CHESTPLATE, e.getNewItem());
+            } else if (slotIndex == PlayerInventoryUtils.HELMET_SLOT) {
+                disguise.setEquipment(EquipmentSlot.HELMET, e.getNewItem());
+            }
         } else if(event instanceof PlayerSwapItemEvent e) {
             Player player = e.getPlayer();
             Disguise disguise = parentManager.getPlayerDisguise(player);
