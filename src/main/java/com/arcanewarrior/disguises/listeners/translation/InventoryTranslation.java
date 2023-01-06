@@ -2,7 +2,6 @@ package com.arcanewarrior.disguises.listeners.translation;
 
 import com.arcanewarrior.disguises.Disguise;
 import com.arcanewarrior.disguises.DisguiseManager;
-import net.minestom.server.MinecraftServer;
 import net.minestom.server.entity.EquipmentSlot;
 import net.minestom.server.entity.Player;
 import net.minestom.server.event.inventory.PlayerInventoryItemChangeEvent;
@@ -16,7 +15,7 @@ public final class InventoryTranslation {
             Player player = e.getPlayer();
             Disguise disguise = parentManager.getPlayerDisguise(player);
             if (disguise != null)
-                MinecraftServer.getSchedulerManager().scheduleNextTick(() -> disguise.setItemInMainHand(player.getItemInMainHand()));
+                disguise.setItemInMainHand(player.getInventory().getItemStack(e.getSlot()));
         } else if (event instanceof PlayerInventoryItemChangeEvent e) {
             Player player = e.getPlayer();
             Disguise disguise = parentManager.getPlayerDisguise(player);
