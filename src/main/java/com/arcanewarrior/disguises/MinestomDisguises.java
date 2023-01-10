@@ -24,7 +24,7 @@ public final class MinestomDisguises extends Extension {
 
         eventInitializer = new EventInitializer(getEventNode(), hideTag);
         disguiseManager = new DisguiseManager(hideTag, config);
-        eventInitializer.registerAll();
+        eventInitializer.registerAll(disguiseManager);
 
         if (!config.getTable("extension").getBoolean("only-api", false)) {
             commandInitializer = new CommandInitializer(disguiseManager);

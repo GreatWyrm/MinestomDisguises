@@ -6,6 +6,7 @@ import net.minestom.server.entity.Player;
 import net.minestom.server.event.player.PlayerHandAnimationEvent;
 import net.minestom.server.event.player.PlayerItemAnimationEvent;
 import net.minestom.server.event.trait.PlayerEvent;
+import net.minestom.server.network.packet.server.play.EntityAnimationPacket;
 
 public final class AnimationTranslation {
     public static void listener(PlayerEvent event, DisguiseManager parentManager) {
@@ -26,6 +27,17 @@ public final class AnimationTranslation {
                     disguise.refreshActiveHand(true, e.getHand() == Player.Hand.OFF, false);
                     disguise.sendPacketToViewers(disguise.getMetadataPacket());
                 }
+            }
+        }
+    }
+
+    public static void entityAnimationListener(EntityAnimationPacket packet, DisguiseManager parentManager) {
+        Disguise disguise = parentManager.getDisguiseFromEntityId(packet.entityId());
+        if (disguise != null) {
+            // todo: almost certainly need additional translations, based on exactly which mob you are disguised as
+            if (packet.animation() == EntityAnimationPacket.Animation.TAKE_DAMAGE) {
+                EntityAnimationPacket newPacket = new EntityAnimationPacket(disguise.getEntityId(), EntityAnimationPacket.Animation.TAKE_DAMAGE);
+                disguise.sendPacketToViewers(newPacket);
             }
         }
     }

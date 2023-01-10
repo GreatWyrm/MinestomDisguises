@@ -30,7 +30,6 @@ public class DisguiseCommand extends Command {
                     }
                 }
             }
-
         }, modeArg, players);
 
         addSyntax((sender, context) -> {

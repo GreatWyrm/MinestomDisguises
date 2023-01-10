@@ -1,6 +1,7 @@
 package com.arcanewarrior.disguises.listeners;
 
 import com.arcanewarrior.disguises.Disguise;
+import com.arcanewarrior.disguises.DisguiseManager;
 import com.arcanewarrior.disguises.MinestomDisguises;
 import net.minestom.server.entity.Player;
 import net.minestom.server.event.Event;
@@ -15,7 +16,7 @@ public record EventInitializer(EventNode<Event> node, Tag<Boolean> hideTag) {
 
     private static final String nodeName = "disguises-player-events";
 
-    public void registerAll() {
+    public void registerAll(DisguiseManager disguiseManager) {
         // Entity Events
         EventNode<EntityEvent> entityParent = EventNode.type(nodeName, EventFilter.ENTITY);
         // Automatically make players hide
@@ -23,7 +24,7 @@ public record EventInitializer(EventNode<Event> node, Tag<Boolean> hideTag) {
         // Remove Disguise when Player Leave
         entityParent.addListener(PlayerDisconnectEvent.class, this::disconnectListener);
         // Register Disguise Events
-        DisguiseEvents events = new DisguiseEvents(MinestomDisguises.getInstance().getDisguiseManager());
+        DisguiseEvents events = new DisguiseEvents(disguiseManager);
         events.registerAll(entityParent);
 
         node.addChild(entityParent);

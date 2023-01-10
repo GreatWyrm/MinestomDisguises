@@ -13,7 +13,9 @@ import net.minestom.server.event.trait.PlayerEvent;
 import net.minestom.server.network.packet.client.ClientPacket;
 import net.minestom.server.network.packet.client.play.ClientInteractEntityPacket;
 import net.minestom.server.network.packet.server.ServerPacket;
+import net.minestom.server.network.packet.server.play.EntityAnimationPacket;
 import net.minestom.server.network.packet.server.play.SetPassengersPacket;
+import net.minestom.server.network.packet.server.play.TeamsPacket;
 
 public final class DisguiseEvents {
     private final DisguiseManager parentManager;
@@ -42,10 +44,11 @@ public final class DisguiseEvents {
     private EventNode<PlayerEvent> inventoryTranslations() {
         EventNode<PlayerEvent> node = EventNode.type("inventory", EventFilter.PLAYER);
         // Low priority in case the events are modified in other nodes
-        node.setPriority(-1000);
-        node.addListener(PlayerChangeHeldSlotEvent.class, event -> InventoryTranslation.listener(event, parentManager));
-        node.addListener(PlayerSwapItemEvent.class, event -> InventoryTranslation.listener(event, parentManager));
-        node.addListener(PlayerInventoryItemChangeEvent.class, event -> InventoryTranslation.listener(event, parentManager));
+        // High number = processed later, thank you Minestom
+        node.setPriority(1000);
+        node.addListener(PlayerChangeHeldSlotEvent.class, event -> InventoryTranslation.changeSlotListener(event, parentManager));
+        node.addListener(PlayerSwapItemEvent.class, event -> InventoryTranslation.swapItemListener(event, parentManager));
+        node.addListener(PlayerInventoryItemChangeEvent.class, event -> InventoryTranslation.equipmentChangeListener(event, parentManager));
         return node;
     }
 
@@ -70,8 +73,11 @@ public final class DisguiseEvents {
         ServerPacket packet = event.getPacket();
         if (packet instanceof SetPassengersPacket)
             PassengerTranslation.listener(event, parentManager);
-        else if (packet instanceof PlayerPacketOutEvent && parentManager.getConfig().getTable("disguises").getBoolean("translate-teams"))
-            TeamTranslation.listener(event, parentManager);
+        else if (parentManager.shouldTranslateTeams() && packet instanceof TeamsPacket teamsPacket)
+            TeamTranslation.listener(event.getPlayer(), teamsPacket, parentManager);
+        else if (packet instanceof EntityAnimationPacket animationPacket) {
+            AnimationTranslation.entityAnimationListener(animationPacket, parentManager);
+        }
     }
 
     private void delegatePacket(PlayerPacketEvent event) {

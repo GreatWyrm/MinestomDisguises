@@ -1,13 +1,13 @@
 {
   "entrypoint": "com.arcanewarrior.disguises.MinestomDisguises",
   "name": "MinestomDisguises",
-  "version": "0.0.3",
+  "version": "0.0.5",
   "externalDependencies": {
     "repositories": [
       {"name": "jitpack", "url": "https://jitpack.io" }
     ],
     "artifacts": [
-      "com.github.CityWideMC:CityStom:8f9625559f"
+      "com.github.CityWideMC:CityStom:1.4.0"
     ]
   },
   "authors": [

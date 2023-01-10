@@ -48,7 +48,7 @@ public final class DisguiseManager {
         if(event.isCancelled()) return;
         hidePlayer(player);
         logger.info("Disguising " + player.getUsername() + " as a " + disguise.getEntityType().name());
-        if(getConfig().getTable("disguises").getBoolean("translate-teams"))
+        if(shouldTranslateTeams())
             disguise.setTeam(disguiseTeam);
         else
             disguise.setTeam(player.getTeam());
@@ -91,6 +91,20 @@ public final class DisguiseManager {
         for (var entry : disguisedPlayers.entrySet()) {
             if(entry.getValue().getEntityId() == entityId) {
                 return entry.getKey();
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Given a player's entity id, gets the disguise that they have
+     * @param entityId the entity id of a player
+     * @return the disguise object they have, or null if they do not have one
+     */
+    public @Nullable Disguise getDisguiseFromEntityId(int entityId) {
+        for (var entry : disguisedPlayers.entrySet()) {
+            if(entry.getKey().getEntityId() == entityId) {
+                return entry.getValue();
             }
         }
         return null;
@@ -153,6 +167,10 @@ public final class DisguiseManager {
 
     public Toml getConfig() {
         return config;
+    }
+
+    public boolean shouldTranslateTeams() {
+         return config.getTable("disguises").getBoolean("translate-teams", false);
     }
 
     // ---- EVENT TRIGGERS -----
