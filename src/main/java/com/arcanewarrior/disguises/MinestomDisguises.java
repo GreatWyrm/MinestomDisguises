@@ -5,7 +5,7 @@ import com.arcanewarrior.disguises.listeners.EventInitializer;
 import com.moandjiezana.toml.Toml;
 import net.minestom.server.MinecraftServer;
 import net.minestom.server.tag.Tag;
-import xyz.citywide.citystom.Extension;
+import org.hypejet.hypestom.Extension;
 
 public final class MinestomDisguises extends Extension {
 

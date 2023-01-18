@@ -13,8 +13,8 @@ repositories {
 }
 
 dependencies {
-    compileOnly("com.github.Minestom.Minestom:Minestom:f291437ada")
-    compileOnly("com.github.CityWideMC:CityStom:1.4.0")
+    compileOnly("com.github.Minestom.Minestom:Minestom:c995f9c3a9")
+    compileOnly("com.github.HypeJet:HypeStom:8041cf5d89")
 }
 
 java {
