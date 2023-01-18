@@ -1,6 +1,8 @@
 package com.arcanewarrior.disguises.listeners.translation;
 
 import com.arcanewarrior.disguises.DisguiseManager;
+import net.minestom.server.coordinate.Point;
+import net.minestom.server.coordinate.Vec;
 import net.minestom.server.entity.Player;
 import net.minestom.server.event.EventDispatcher;
 import net.minestom.server.event.entity.EntityAttackEvent;
@@ -20,7 +22,8 @@ public final class InteractTranslation {
                     if (type instanceof ClientInteractEntityPacket.Attack) {
                         EventDispatcher.call(new EntityAttackEvent(event.getPlayer(), trueTarget));
                     } else if (type instanceof ClientInteractEntityPacket.InteractAt interactAt) {
-                        EventDispatcher.call(new PlayerEntityInteractEvent(event.getPlayer(), trueTarget, interactAt.hand()));
+                        Point interactPosition = new Vec(interactAt.targetX(), interactAt.targetY(), interactAt.targetZ());
+                        EventDispatcher.call(new PlayerEntityInteractEvent(event.getPlayer(), trueTarget, interactAt.hand(), interactPosition));
                     }
                 }
                 // Cancel the event so the original input does not go through
